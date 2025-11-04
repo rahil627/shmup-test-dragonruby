@@ -256,6 +256,7 @@ return if args.state.c.init # returns true?
 
 ||=
   # Whatever is on the left OR assign to the right
+  # "Here's a fun Ruby thing: args.state.rotation ||= 0 is shorthand for "if args.state.rotation isn't initialized, set it to zero." It's a nice way to embed your initialization code right next to where you need the variable."
 
 # WARN: don't use booleans with ||=
 ||= false

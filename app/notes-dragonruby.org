@@ -1,0 +1,170 @@
+
+# NOTE: magit-rename before commit
+
+# TODO: what's wrong with making the /app folder a git repo..??
+
+# TODO: setup ctags for emacs
+
+# TODO: make a private git repo, and put the binary in it
+
+* dev experience
+** the basics
+
+/dragonruby/mygame/app/main.rb
+  - the main entrance
+    
+/dragonruby/dragonruby
+  - the executable
+
+leave the game open as you are coding!
+  - it will auto-pause/suspend
+  - save the main.rb file to reload the updated game
+
+** dev console
+
+` or ~
+
+you can explore the ruby program via the provided dev console
+  - it has tab completion
+
+if run via terminal, it seems to print output there too
+
+** repl.rb
+
+You can use DragonRuby's Console within the game to inspect object and execute small pieces of code. For more complex pieces of code create a file called repl.rb and put it in mygame/app/repl.rb:
+
+Any code you write in there will be executed when you change the file. You can organize different pieces of code using the repl method:
+
+#+begin_src ruby
+repl do
+  puts "hello world"
+  puts 1 + 1
+end
+
+xrepl do
+# use xrepl to "comment out" code
+  puts "This code will not be executed because of the x in front of repl".
+end
+#+end_src
+
+If you use the repl method, the code will be executed and the DragonRuby Console will automatically open so you can see the results (on Mac and Linux, the results will also be printed to the terminal). All puts statements will also be saved to logs/puts.txt. So if you want to stay in your editor and not look at the terminal, or the DragonRuby Console, you can tail this file. 4. To ignore code in repl.rb, instead of commenting it out, prefix repl with the letter x and it'll be ignored.
+** debugging
+
+"You can use DragonRuby's replay capabilities to troubleshoot:
+
+DragonRuby is hot loaded which gives you a very fast feedback loop (if the game throws an exception, it's because of the code you just added). Use ./dragonruby mygame --record to create a game play recording that you can use to find the exception (you can replay a recording by executing ./dragonruby mygame --replay last_replay.txt or through the DragonRuby Console using $gtk.recording.start_replay "last_replay.txt".
+
+DragonRuby also ships with a unit testing facility. You can invoke the following command to run a test: ./dragonruby mygame --test tests/some_ruby_file.rb. Get into the habit of adding debugging facilities within the game itself. You can add drawing primitives to args.outputs.debug that will render on top of your game but will be ignored in a production release.
+
+Debugging something that runs at 60fps is (imo) not that helpful. The exception you are seeing could have been because of a change that occurred many frames ago."
+
+** how to trigger LSP completions
+
+this must be using solargraph..
+
+#+begin_src ruby
+$args. not args.
+  # triggers auto-complete
+  # **all of DR's functions are here**
+
+$args.gtk.
+GTK.
+  # this also works, but then you'd have to remember the name of the classes
+
+args.state.player[:
+  # triggers auto-complete
+  # shows all keys for the current hash, then arts.inputs, then args.outputs
+
+# @params args [GTK::Args] # this tells solargraph a type hint
+def tick args
+  args.
+    # triggers auto-complete
+    # but at the moment, it only works within the function, and doesn't propogate the call stack
+end
+#+end_src
+
+
+* code
+** some notes from the tutorial
+
+the main game loop: tick
+
+#+begin_src ruby
+def tick args
+  # $game ||= Game.new
+  $game.args = args # for attr_gtk macro
+  $game.tick
+end
+#+end_src
+
+"DragonRuby looks for this function and calls it every frame, 60 times a second..."
+
+"Once your tick function finishes, we look at all the arrays you made (under outputs) and figure out how to draw it. You don't need to know about graphics APIs. You're just setting up some arrays! DragonRuby clears out these arrays every frame, so you just need to add what you need _right now_ each time."
+
+
+
+60fps:
+
+"One thing we decided to do in DragonRuby is not make you worry about delta time: your function runs at 60 frames per second (about 16 milliseconds) and that's that."
+
+"Since we didn't make you worry about delta time, you can just move the rotation by 1 every time and it works without you having to keep track of time and math. Want it to move faster? Subtract 2."
+
+** args
+
+"'args' is a magic structure with lots of information in it. You can set variables in there for your own game state, and every frame it will updated if keys are pressed, joysticks moved, mice clicked, etc."
+
+everything is in args
+
+args.state
+  # global state
+  # use console to see what's inside interactively
+  #   - type 'args', then press tab
+  #     - same for gtk
+  # args.state is a place you can hang your own data. It's an open data structure that allows you to define properties that are arbitrarily nested. You don't need to define any kind of class.
+  - args.state.can.be.nested
+
+"Want something to go away? Just don't add it to args.output anymore."
+  
+args.outputs.debug
+  # output debug stuff here, probably doesn't go to production release
+  
+** some notes from the docs
+
+If you want your game to run at full speed even when it's in the background, add the following line to mygame/metadata/cvars.txt:
+
+renderer.background_sleep=0
+
+** DR magicks
+
+player[:x] = player[:x].add(dx).clamp(0)
+  # "In DR specifically, Hashes have access semantics that look more like JavaScript objects: you can access (Symbol) keys either with square brackets or dot-notation. The rationale for this is that it makes the code change smaller when migrating from Hashes to Objects, with the bonus that dot-notation can actually be faster than the equivalent bracketed lookup." - pvande
+
+** secrets that can't be found via lsp
+rand # global var?
+
+sprite = { path: :pixel }
+  # generates a pixel image
+
+{x: 0, y: 0, w: 10, h: 10}.top/bottom/left/right
+  # returns the length of a single side
+
+1.to_radians/degrees
+
+** optimal ways
+# better to render via sprites instead of drawing api
+#   - solids, borders, lines are debug objects and not meant for production, as they are drawn one pixel at a time..! lines can be used, but a sprite is still much better
+
+* amir's response about dynamic typing
+# The way DR mitigates the lack of a static typing "feedback" is:
+# hotloading with game state being retained
+# built-in HUD/Quake Console
+# args.outputs.watch https://docs.dragonruby.org/#/api/outputs?id=watch
+# game play recording and replay https://docs.dragonruby.org/#/api/runtime?id=start_recording YouTube demo.d
+
+# the (very real) benefits of dynamic typing:
+# you are never waiting to start working again
+# when in the prototyping phase, where you don't know what you're building yet, there's nothing asking you "but what are you building?!"
+# in the event of an exception, the game is paused giving you a chance to introspect your game state
+# extreme flexibilty, in a domain - game/artistic endeavors - where things simply don't fit into nice neat boxes
+# significantly less code is written to accomplish the same task, hands down ^_^
+

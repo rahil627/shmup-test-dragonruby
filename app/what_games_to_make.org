@@ -1,0 +1,40 @@
+
+i've def written this down in some notebook somewhere..
+
+the fighting games however should be in the fighting game project repo
+
+
+harvest moon / stardew valley / earthbound (without the battle system) small-town JRPG love / a 2d animal crossing! that takes place in TW! <3
+  - covers 2d top down / JRPG
+    - requires tiling, etc.
+      - this has been a done a million times, why again?
+        - see that one haxe tool for level/map-making..
+  - bike around, explore waterfalls, mountain valleys, etc.
+
+** battle game makers:
+  - TODO: see my fighting game anarchy repo..
+
+platformer / side-view
+  - super smash bros
+  - all traditional "2d fighters"
+
+top-down / angled / 2.5d
+  - that one game that simon liked
+    - hyperlight drifter!
+  - that 3v1 game.. crawl?
+    - tight, fast, funky
+  - ragnarok online
+    - not so much for the battle system, but for how incredible 2d can look!
+      - though, the battle system was fine too, lol... just an impossible grind by default
+  - fat princess
+  - final fantasy tactics?
+    - this one was beautiful for a 2d game.. full of seasons, geography, characters..
+
+super mario rpg
+  - how was this not 3d..?
+
+
+3d
+  - fez
+  - that one samurai game
+    - didn't have to be 3d.. just one-hit, tight

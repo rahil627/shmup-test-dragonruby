@@ -1,6 +1,4 @@
 
-# NOTE: magit-rename before commit
-
 # TODO: what's wrong with making the /app folder a git repo..??
 
 # TODO: setup ctags for emacs
@@ -58,12 +56,43 @@ DragonRuby also ships with a unit testing facility. You can invoke the following
 
 Debugging something that runs at 60fps is (imo) not that helpful. The exception you are seeing could have been because of a change that occurred many frames ago."
 
-** how to trigger LSP completions
+** how to trigger completions
+
+*** ctags
+ctags for emacs and vim are included
+
+TODO: ALL of the completions are jumbled up.. :/
+  - everything is under GTK, or the module or class name (Sprite, Rect, etc.)
+    - i mean, that's what the tags tables file shows.. if i'm reading it correctly..
+  - shit, maybe a static lang is better..
+  - *try zed(itor), just to quickly see what happens*
+
+M-x visit-tags-table
+  - should be fine after that..
+
+M-x select-tags-table
+  - to see a list of tag paths stored..?
+
+etags *.c *.h
+
+etags $(find . -name \*.[ch]) --declarations
+  - for sub-directories, looks for .c and .h (C) files
+  - re-generate etags (ctags -e)
+    - WARNING: not sure if this over-writes the orginal file..
+      - the original file includes ctags for the runtime vars (GTK, etc.)
+
+
+*** LSP
 
 this must be using solargraph..
 
+i recall it at least categorizing completions, with the current class's methods on top, then super/inherited objects below
+
+but now, with the prism parser, surely there's a better one..??
+
+
 #+begin_src ruby
-$args. not args.
+$args. # NOT args.
   # triggers auto-complete
   # **all of DR's functions are here**
 
@@ -82,7 +111,6 @@ def tick args
     # but at the moment, it only works within the function, and doesn't propogate the call stack
 end
 #+end_src
-
 
 * code
 ** some notes from the tutorial

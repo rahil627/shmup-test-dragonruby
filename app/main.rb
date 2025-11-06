@@ -22,11 +22,9 @@ class Game # TODO: how come i can't see Game in the dev console..??
   # @param args [GTK::Args] # TODO: rename args to a (though can be difficult to search for "a.")
   def tick
 
-    pause_when_unfocused
-    
-    # run_defaults # from defaults module
-    init if Kernel.tick_count.zero? # thanks to pvande
-    return if pause_because_unfocused? # from defaults module
+    #run_defaults_pre_init # from defaults module
+    init if Kernel.tick_count.zero? # thanks to pvande # TODO: test return after this?
+    #return if pause_because_unfocused? # from defaults module
     handle_input # from input module
     # move_player
     # shoot_player
@@ -35,34 +33,14 @@ class Game # TODO: how come i can't see Game in the dev console..??
     handle_output # vs render
   end
 
-  # TODO: see defaults.rb -- doh!
-  def pause_when_unfocused
-
-    if (!args.inputs.keyboard.has_focus && args.gtk.production && Kernel.tick_count != 0)
-
-      args.outputs.background_color = [0, 0, 0]
-      args.outputs.labels << { x: 640,
-                               y: 360,
-                               text: "Game Paused (click to resume).",
-                               alignment_enum: 1,
-                               r: 255, g: 255, b: 255 }
-      # consider setting all audio volume to 0.0
-    end
-  end
 
   def reset
     game_init
   end
 
   def init
-    app_init
+    run_defaults_init # app_init
     game_init
-  end
-
-  def app_init
-    $args.gtk.set_window_size(500, 500)
-    GTK.set_window_size(500, 500)
-    # TODO: not working..
   end
 
   def game_init

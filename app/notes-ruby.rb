@@ -1,6 +1,6 @@
 # TODO: merge in ruby.txt
 
-
+# TODO: see ruby crash course in repl.rb
 
 # advanced
 

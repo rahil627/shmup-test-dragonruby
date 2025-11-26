@@ -12,37 +12,50 @@ end
 # "args" is a magic structure with lots of information in it. You can set variables in there for your own game state, and every frame it will updated if keys are pressed, joysticks moved, mice clicked, etc.
 # Once your tick function finishes, we look at all the arrays you made (under outputs) and figure out how to draw it. You don't need to know about graphics APIs. You're just setting up some arrays! DragonRuby clears out these arrays every frame, so you just need to add what you need _right now_ each time.
 
+
 class Game # TODO: how come i can't see Game in the dev console..??
-  attr_gtk
+  attr_gtk # included modules work fine too! :D
 
-  include Input
   include Defaults # plural?
-
+  include Common
+  include Input
+  include Sprites
+  # having everything as a module and including it can get hairy, as they share a single namespace.. but i think that's just the way it is... at least in C it is!
+  # without classes (save this one), it's basically the same as one giant file!
+  # you can arbitrarily create modules as you want, to segment code
+  # and you can arbitrarily creates files as you want, to further segment code!
+  # NOTE: can seperate code into modules by main tick functions!
+  #   - init, input, logic, output, make sprites
+  #   - yay! no need to think about confusing objects!!
+  #   - ..but for such a simple idea, just keep it one file..
+  # TODO: should just set up code folding for now..
+  
   # main game loop
   # @param args [GTK::Args] # TODO: rename args to a (though can be difficult to search for "a.")
   def tick
-
-    #run_defaults_pre_init # from defaults module
     init if Kernel.tick_count.zero? # thanks to pvande # TODO: test return after this?
-    #return if pause_because_unfocused? # from defaults module
+    return if pause_because_unfocused? # from defaults module
     handle_input # from input module
-    # move_player
-    # shoot_player
-    handle_logic
+    handle_logic # most of the game goes here
     take_out_the_trash
     handle_output # vs render
   end
 
 
+  
+  ### INIT
+  
   def reset
     game_init
   end
 
   def init
-    run_defaults_init # app_init
+    #default_pre_init
+    default_init # app_init
     game_init
+    #default_post_init
   end
-
+  
   def game_init
     puts "init"
     
@@ -54,14 +67,11 @@ class Game # TODO: how come i can't see Game in the dev console..??
     # args.state.screen = {x: 0, y: 0, h: 720, w: 1280}
     args.state.screen = {x: 0, y: 0, h: 720/2, w: 1280/2}
     # NOTE: Also: your game screen is _always_ 1280x720 pixels. If you resize the window, we will scale and letterbox everything appropriately, so you never have to worry about different resolutions.
-
-
-
     
     args.state.players = []
     args.state.lasers = []
     # arrays of hashes
-
+    #   - much simpler than an entity-component-system! :)
 
     # NOTE: move this to update player
     # p = args.state.player # must do after lazy init
@@ -72,45 +82,21 @@ class Game # TODO: how come i can't see Game in the dev console..??
 
   end
 
-  def make_player1
-    make_player x: 400,
-                y: 320.randomize(:sign, :ratio),
-                angle: 180,
-                path: 'sprites/circle/violet.png'
-    # color: { r: 255, g: 90, b: 90 }
-  end
 
-  def make_player2
-    make_player x: 800,
-                y: 250.randomize(:sign, :ratio),
-                angle: 0,
-                path: 'sprites/circle/green.png'
-    # color: { r: 110, g: 140, b: 255 }
-  end
+  
+  ### TRASH
 
-  def make_player x:, y:, angle:, path:; #, color:;
-    # dead: false,
-    # color: color,
-    # created_at: Kernel.tick_count,
-    {x: x,
-     y: y,
-     w: 80,
-     h: 80,
-     path: path,
-     # a: 255,
-     angle: angle,
-     anchor_x: 0.5,
-     anchor_y: 0.5,
-     vx: 0,
-     vy: 0,
-     trash: false, # for garbage collection
-     # dead?
-     cooldown: 0,
-     health: 10,
-     score: 0 }
+  def take_out_the_trash
+  # remove arrays 'n hashes all at once
+    # "For what it’s worth, you could implement this behavior yourself — instead of calling “delete”, you could set obj.garbage = true. After your iteration, then you only need array.reject!(&:garbage) to clean up." - pvande
+    args.state.lasers.reject!(&:trash) # TODO: learn &:key
+    args.state.players.reject!(&:trash)
   end
 
 
+  
+  ### OUTPUT
+  
   def handle_output
     # output at the end
     args.outputs.background_color = [128, 0, 128]
@@ -126,46 +112,90 @@ class Game # TODO: how come i can't see Game in the dev console..??
     # args.state.clear! if args.state.player[:health] < 0 # Reset the game if the player's health drops below zero
   end
 
+
+
+  
+  ### LOGIC
+  
   def handle_logic
-    # store_inputs
-    # move_players
-    # shoot_players
-    handle_lasers
-    # extend
-    # reflect
-    # add new laser
+    # store_inputs / handle_device_input
+
+    # handle input-affected stuff
+    move_players
+    add_players_shots
+
+    move_lasers
+    #   - extend
+    #   - reflect
+    #     - add new laser
+
     # TODO:
     # check_laser_collisions args
-    # do after reflect and shoot_players, 'cause they add new lasers
+    #   - do after reflect and shoot_players, 'cause they add new lasers
   end
 
-  def check_laser_collisions
-    # TODO: incomplete
-    args.state.lasers.each do |l| # loop players or lasers? no player port frame advantage!
-      args.state.players.each do |p|
 
-        # TODO: dunno about any of this, it's from the sample
-        # args.state.enemies.reject! do |enemy| # TODO: reject, but no conditional..?
-        # args.state.player_bullets.any? do |bullet| # TODO: LEARN: any, no conditional
-        # TODO: should center sprite anchors, especially player
-        #   - Check if enemy and player are within 20 pixels of each other (i.e. overlapping)
-        if 1000 > (l.x - p.x ** 2 + (l.y - p.y) ** 2)
+  def move_players
+    # p = args.state.player
+    args.state.players.each do |p|
 
-          # TODO: pause game here
-          # TODO: highlight collision point
+      s = p[:s] ||= 0.75 # speed
+      dx, dy = args.state.in.move_vector
 
-          # l.trash ||= true
-          #  - nahhh, keep laser
-          # kill player
-          p.trash ||= true
-        end
-        
-      end
+      # TODO: use anchor_x/y and angle_anchor_x to turn sprite
+      p[:angle] = vector_to_angle(dx, dy) - 90
+
+      # Take the weighted average of the old velocities and the desired velocities.
+      # Since move_directional_vector returns values between -1 and 1,
+      #   and we want to limit the speed to 7.5, we multiply dx and dy by 7.5*0.1 to get 0.75
+      p[:vx] = p[:vx] * 0.9 + dx * s
+      p[:vy] = p[:vy] * 0.9 + dy * s
+
+      # move
+      p.x += p[:vx]
+      p.y += p[:vy]
+
+      # bound to screen
+      p.x = p.x.clamp(0, 1201)
+      p.y = p.y.clamp(0, 640)
     end
   end
 
 
-  def handle_lasers
+  def add_players_shots
+    # p = args.state.player
+    args.state.players.each do |p|
+
+      p[:cooldown] -= 1
+      return if p[:cooldown] > 0
+      
+      cooldown_length = p[:cooldown_length] ||= 60 # 1/second
+      
+      dx, dy = args.state.in.shoot_vector
+      return if dx == 0 and dy == 0 # if no input, return early
+
+      # add a new bullet to the list of player bullets
+      w = p.w
+      h = p.h
+
+      x = p.x + w/2 * dx
+      y = p.y + h/2 * dy
+      add_laser ({x: x, y: y, dx: dx, dy: dy})
+      
+      # vs seperate sprite
+      # args.state.laser_heads << { x: x, y: y, w: 5, h: 5, path: 'sprites/circle/green.png', angle: vector_to_angle(dx, dy) }
+
+      p[:cooldown] = cooldown_length # reset the cooldown
+    end
+  end
+
+
+  def add_laser a
+    # NOTE: also called during reflect
+    args.state.lasers << (make_laser a)
+  end
+
+  def move_lasers
     args.state.lasers.each do |l|
 
       s = args.state.c.laser_speed ||= 1 # speed, 1/720 per tick..?
@@ -201,21 +231,10 @@ class Game # TODO: how come i can't see Game in the dev console..??
           l.dy *= -1
         end
         
-        make_laser ({x: l.head.x, y: l.head.y, dx: l.dx, dy: l.dy})
+        add_laser ({x: l.head.x, y: l.head.y, dx: l.dx, dy: l.dy})
       end
 
     end
-  end
-
-  # def reflect_angle angle
-  #   180 - angle
-  # end
-
-  # remove arrays 'n hashes all at once
-  def take_out_the_trash
-    # "For what it’s worth, you could implement this behavior yourself — instead of calling “delete”, you could set obj.garbage = true. After your iteration, then you only need array.reject!(&:garbage) to clean up." - pvande
-    args.state.lasers.reject!(&:trash) # TODO: learn &:key
-    args.state.players.reject!(&:trash)
   end
 
   def off_screen_or_on_the_edge_top_bottom? e
@@ -226,15 +245,32 @@ class Game # TODO: how come i can't see Game in the dev console..??
     e.x <= 0 - e.w || e.x >= 1280 + e.w
   end
 
-  def off_screen_or_on_the_edge? e
-    # if not Geometry.inside_rect?(l.rect, args.state.screen)
-    e.x <= 0 - e.w || e.y <= 0 - e.h || e.x >= 1280 + e.w || e.y >= 720 + e.h
+  
+  def check_laser_collisions
+    # TODO: incomplete
+    args.state.lasers.each do |l| # loop players or lasers? no player port frame advantage!
+      args.state.players.each do |p|
+
+        # TODO: dunno about any of this, it's from the sample
+        # args.state.enemies.reject! do |enemy| # TODO: reject, but no conditional..?
+        # args.state.player_bullets.any? do |bullet| # TODO: LEARN: any, no conditional
+        # TODO: should center sprite anchors, especially player
+        #   - Check if enemy and player are within 20 pixels of each other (i.e. overlapping)
+        if 1000 > (l.x - p.x ** 2 + (l.y - p.y) ** 2)
+
+          # TODO: pause game here
+          # TODO: highlight collision point
+
+          # l.trash ||= true
+          #  - nahhh, keep laser
+          # kill player
+          p.trash ||= true
+        end
+        
+      end
+    end
   end
 
-  def off_screen? e
-    # if not Geometry.inside_rect?(l.rect, args.state.screen)
-    e.x < 0 - e.w || e.y < 0 - e.h || e.x > 1280 + e.w || e.y > 720 + e.h
-  end
 
 
 end # class game

@@ -1,9 +1,17 @@
 
-# TODO: what's wrong with making the /app folder a git repo..??
+TODO: what's wrong with making the /app folder a git repo..??
 
-# TODO: setup ctags for emacs
+TODO: make a private git repo, and put the binary in it
+  - this way i don't ever have to bother with set-up (or versions)!
 
-# TODO: make a private git repo, and put the binary in it
+TODO: setup company-dragonruby for emacs
+  - copy configs
+    - TODO: create a function for this
+  - doom sync
+  - test it out!
+  - is it ordered?
+    - (corfu +orderless +company) ; try removing +orderless in init?
+    - corfu-sort-function?
 
 * dev experience
 ** the basics
@@ -58,14 +66,46 @@ Debugging something that runs at 60fps is (imo) not that helpful. The exception 
 
 ** how to trigger completions
 
-*** ctags
-ctags for emacs and vim are included
+NOTE: i temporarily turned off ruby entirely in the .bashrc file using mise..
 
-TODO: ALL of the completions are jumbled up.. :/
+*** emacs company-mode
+
+from ai:
+Installing company-dragonruby in Doom Emacs and integrating it with corfu and cape involves several steps.
+
+Enable company and corfu modules in Doom Emacs:
+Open your ~/.doom.d/init.el file and ensure that the +company flag is enabled for the completion module, and the corfu module is also enabled.
+Code
+
+    (doom! :completion
+           (corfu +company)
+           ;; ... other completion modules
+           )
+Install company-dragonruby.
+Add company-dragonruby to your ~/.doom.d/packages.el file.
+Code
+
+    (package! company-dragonruby)
+Then, run doom sync in your terminal to install the package.
+Configure corfu and cape to use company-dragonruby:
+In your ~/.doom.d/config.el file, you need to configure cape to bridge company-dragonruby to completion-at-point-functions (CAPF), which corfu uses.
+Code
+
+    (after! company-dragonruby
+      (add-to-list 'completion-at-point-functions
+                   (cape-company-to-capf #'company-dragonruby)))
+This code snippet ensures that after company-dragonruby is loaded, its completion capabilities are exposed to corfu via cape-company-to-capf. Reload Doom Emacs.
+Restart Emacs for the changes to take effect. Now, when editing DragonRuby files, corfu should provide completions using company-dragonruby.
+
+*** ctags
+ctags for emacs (etags) and vim are included
+
+NOTE: ALL of the completions are jumbled up.. :/. there is no object/module hierarchy to organize completions
   - everything is under GTK, or the module or class name (Sprite, Rect, etc.)
     - i mean, that's what the tags tables file shows.. if i'm reading it correctly..
   - shit, maybe a static lang is better..
   - *try zed(itor), just to quickly see what happens*
+    - it's a pain to set up on this shitty chromebook, as it's gpu-oriented :/
 
 M-x visit-tags-table
   - should be fine after that..
@@ -80,7 +120,6 @@ etags $(find . -name \*.[ch]) --declarations
   - re-generate etags (ctags -e)
     - WARNING: not sure if this over-writes the orginal file..
       - the original file includes ctags for the runtime vars (GTK, etc.)
-
 
 *** LSP
 
@@ -102,7 +141,7 @@ GTK.
 
 args.state.player[:
   # triggers auto-complete
-  # shows all keys for the current hash, then arts.inputs, then args.outputs
+  # shows all keys for the current hash, then args.inputs, then args.outputs
 
 # @params args [GTK::Args] # this tells solargraph a type hint
 def tick args
@@ -167,6 +206,15 @@ renderer.background_sleep=0
 player[:x] = player[:x].add(dx).clamp(0)
   # "In DR specifically, Hashes have access semantics that look more like JavaScript objects: you can access (Symbol) keys either with square brackets or dot-notation. The rationale for this is that it makes the code change smaller when migrating from Hashes to Objects, with the bonus that dot-notation can actually be faster than the equivalent bracketed lookup." - pvande
 
+
+entity = {
+  x: ..
+  y: ..
+  ...
+  head: { x: a.x, y: a.y, w: 5, h: 5, path: :pixel, r: 0, g: 255, b: 0}, # composition..??
+}
+  # can nest sprites/entities together
+  
 ** secrets that can't be found via lsp
 rand # global var?
 

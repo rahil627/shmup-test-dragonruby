@@ -1,29 +1,37 @@
 
 module Defaults
 # common sane defaults for my personal games
-# just 'run_defaults args' on tick and you're good!
+# just 'default_init args' on init and 'default_tick args' on tick and you're good!
 
+# TODO: is the attr_gtk macro only at class level? not module level?
   
-def run_defaults_pre_init args
-  
-end
-
-def run_defaults_init args
-    $args.gtk.set_window_size(500, 500)
-    GTK.set_window_size(500, 500)
-    # TODO: not working..
-end
-
-  
-def run_defaults_post_init args
-  pause_because_unfocused? args
+def default_pre_init
+ 
 end
 
 
-def pause_because_unfocused? args
+def default_init
+  $args.gtk.set_window_size(500, 500)
+  GTK.set_window_size(500, 500)
+  # TODO: not working..
+end
 
+  
+def default_post_init
+  
+end
+
+
+def default_tick
+  # return pause_because_unfocused? args # TODO: is there a better way to return from an outer function?
+end
+
+
+def pause_because_unfocused?
   # from the docs
-  if (!args.inputs.keyboard.has_focus && args.gtk.production) # && Kernel.tick_count != 0)
+  # if the keyboard doesn't have focus, and the game is in production mode, and it isn't the first tick
+  # TODO: currently only good for desktop/keyboard
+  if (not args.inputs.keyboard.has_focus and args.gtk.production) # and Kernel.tick_count != 0)
     # good for programming hot-reload workflow
       # saves battery too!
     args.outputs.background_color = [0, 0, 0, 125] # alpha doesn't work here because there is no other ouput, the program stops after this..!
@@ -42,16 +50,6 @@ def pause_because_unfocused? args
     false
   end
 end
-
-def unfocused?
-  # TODO: currently only good for desktop/keyboard
-  # just return on production release for now
-  return if args.gtk.production
-
-  # if the keyboard doesn't have focus, and the game is in production mode, and it isn't the first tick
-  (not args.inputs.keyboard.has_focus and Kernel.tick_count != 0)
-end
-
 
 end # module
 

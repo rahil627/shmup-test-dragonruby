@@ -17,8 +17,10 @@ https://discord.dragonruby.org
 
 * docs
 single file static local docs
-  - file:///C:/Users/ra/my-stuff/repos/dragonruby-windows-amd64/docs/static/docs.html
-  
+  - [[file:~/my-stuff/repos/dragonruby/dragonruby-linux-amd64/docs/static/docs.html]]
+  - [[file:~/my-stuff/repos/dragonruby/dragonruby-linux-amd64/docs/static/docs.txt]]
+    - *actually a .org file!!*
+
 * philosophy
 
 TODO: read
@@ -620,7 +622,11 @@ mobile
   - only pro version
 
 
-* getting started / tutorial
+* TODO getting started / tutorial
+
+UPDATE: NOTE: found a docs.txt that was a .org file!
+  - thank goodness..! that generated html file sucked!
+  - not sure if i need these notes anymore..
 
 my notes while going over the tutorial in the docs
   - it's mostly copy-pasta from the single page docs, which just wasn't very organized..

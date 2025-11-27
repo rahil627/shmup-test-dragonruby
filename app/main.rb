@@ -8,8 +8,8 @@ require_relative "sprites"
 
 
 def tick args
-  # args.gtk.suppress_mailbox = false # TODO: ERROR: for communication to ide
-  # $game ||= Game.new # deprecated
+  # args.gtk.suppress_mailbox = false # for communication to ide
+  #  - TODO: ERROR: probably just some old info ai found..
   $game = Game.new if Kernel.tick_count.zero?
   $game.args = args # for attr_gtk macro
   $game.tick

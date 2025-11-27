@@ -55,16 +55,19 @@ wrt incremental evolution: **a system in it's simplest form is a function that a
 * dev experience
 ** git repo setup
 
+either:
+  - keep a single folder of dragonruby and *just directly edit the repo in ./mygame*
+    - then copy the folder to a seperate repo, per game, when you want to upload/push to git
+    - keep a copy of 'VERSION.txt' appended to the top of main.rb
+  - *create a private repo with the whole thing un-zipped, with the .gitignore below*
+    - ~100mb each
+      - mostly images for its many included samples..
+      - (dragonruby run-time is only 4mb tho..)
+
+from the docs for public repos:
 1. Your public repository needs only to contain the contents of ./mygame. This approach is the cleanest and doesn't require your .gitignore to be polluted with DragonRuby specific files.
 2. edit .gitignore (see docs)
 3. edit .gitgnore: add `/tmp/` and `/logs/`
-  - NOTE: either:
-    - keep a single folder of dragonruby and *just directly edit the repo in ./mygame*
-      - then copy the folder to a seperate repo, per game, when you want to upload/push to git
-    - *create a private repo with the binary and all*
-      - ~100mb each
-        - contains a lot of images for deploying to various platforms..
-        - (dragonruby run-time is only 4mb tho..)
     
 The DragonRuby binary/package is designed to be committed in its entirety with your source code (it’s why we keep it small). This protects the “shelf life” for commercial games. 3 years from now, we might be on a vastly different version of the engine. But you know that the code you’ve written will definitely work with the version that was committed to source control.
 

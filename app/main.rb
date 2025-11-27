@@ -148,7 +148,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
       dx, dy = args.state.in.move_vector
 
       # TODO: use anchor_x/y and angle_anchor_x to turn sprite
-      p[:angle] = vector_to_angle(dx, dy) - 90
+      p[:angle] = vector_to_angle(dx, dy)
 
       # Take the weighted average of the old velocities and the desired velocities.
       # Since move_directional_vector returns values between -1 and 1,

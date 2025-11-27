@@ -8,7 +8,8 @@ require_relative "input"
 
 def tick args
   args.gtk.suppress_mailbox = false # for communication to ide
-  $game ||= Game.new
+  # $game ||= Game.new # deprecated
+  $game = Game.new if Kernel.tick_count.zero?
   $game.args = args # for attr_gtk macro
   $game.tick
 end

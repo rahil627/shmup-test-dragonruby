@@ -7,11 +7,30 @@ require_relative "input"
 require_relative "sprites"
 
 
-# TODO:
+# TODO: main todo list
 # $game ||= Game.new # auto-init deprecated, check ruby's safe operator
 def boot args
   # args.state = {} # disables auto-init of nil
 end
+
+# create a laser collection
+#  - includes laser + reflections
+
+# BUG: second player stopped shooting after the first shot ;(
+
+#  - DESIGN: how to determine the length / when it should stop?
+#    - just try playing with various lengths..
+#    - first try with just one laser, and both players must survive/run
+
+# DESIGN: maybe can have abilities:
+#  1. portal
+#    - my initial idea: shoot a portal, press again to deploy, then it reflects lasers depending on angle
+#  - cut laser
+#  - reflect / alter direction of laser
+#  - jump / teleport
+
+# ART: doesn't have to be lasers..
+#  - could be a monster!.. a dragon?
 
 
 def tick args

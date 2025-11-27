@@ -1,3 +1,6 @@
+# from VERSION.txt
+# date: Wed Nov 5 02:30:27 CST 2025
+# git: ecab86c436a1854ab3c424ee5d82fefdbbba103c
 
 require_relative "defaults"
 require_relative "input"

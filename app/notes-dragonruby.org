@@ -1,8 +1,7 @@
 
-TODO: what's wrong with making the /app folder a git repo..??
-
 TODO: make a private git repo, and put the binary in it
   - this way i don't ever have to bother with set-up (or versions)!
+  - only need one version.. so i don't need to login to itch.io again to download it..
 
 TODO: setup company-dragonruby for emacs
   - copy configs
@@ -21,7 +20,35 @@ single file static local docs
   - file:///C:/Users/ra/my-stuff/repos/dragonruby-windows-amd64/docs/static/docs.html
   
 * philosophy
+
 TODO: read
+
+** some design quotes from amir
+**"Start your game as simply as possible. One file, one method (tick).**
+
+**"A game is a body-of-state that goes through a pipeline of data transforms, and returns what should be rendered to the screen. Your single method will eventually become a collection of methods that are executed in order (it’s procedural in nature given that it’s a pipeline that transforms data/game state)."**
+
+wrt incremental evolution: **a system in it's simplest form is a function that acts on data. that's what I start with**
+
+**my "entity" is a hash. and my component is keys on that hash.**
+  - **start with this for entity architecture**
+
+**ecs in its simplest form is a function that operates on a hash with an assumed set of keys/properties**
+
+** amir's response about dynamic typing
+
+# The way DR mitigates the lack of a static typing "feedback" is:
+# hotloading with game state being retained
+# built-in HUD/Quake Console
+# args.outputs.watch https://docs.dragonruby.org/#/api/outputs?id=watch
+# game play recording and replay https://docs.dragonruby.org/#/api/runtime?id=start_recording YouTube demo.d
+
+# the (very real) benefits of dynamic typing:
+# you are never waiting to start working again
+# when in the prototyping phase, where you don't know what you're building yet, there's nothing asking you "but what are you building?!"
+# in the event of an exception, the game is paused giving you a chance to introspect your game state
+# extreme flexibilty, in a domain - game/artistic endeavors - where things simply don't fit into nice neat boxes
+# significantly less code is written to accomplish the same task, hands down ^_^
 
 * dev experience
 ** git repo setup
@@ -209,6 +236,14 @@ end
 "'args' is a magic structure with lots of information in it. You can set variables in there for your own game state, and every frame it will updated if keys are pressed, joysticks moved, mice clicked, etc."
 
 everything is in args
+  
+args.outputs
+  - draw things, append arrays with << operator
+  - "Want something to go away? Just don't add it to args.output anymore."
+args.outputs.debug
+  # output debug stuff here, probably doesn't go to production release
+    
+args.inputs
 
 args.state
   # global state
@@ -217,19 +252,66 @@ args.state
   #     - same for gtk
   # args.state is a place you can hang your own data. It's an open data structure that allows you to define properties that are arbitrarily nested. You don't need to define any kind of class.
   - args.state.can.be.nested
+args.state.player[x:]
+args.state.player.x
+  - a place you can hang your own data. It's an open data structure that allows you to define properties that are arbitrarily nested. You don't need to define any kind of class.
+  - it seems to be nested hashes
+  - dot notation has the benefit of being easy to refactor if player evolves into a class
+  - standard hash notation currently has the benefit of auto-complete working
+  
+args.geometry
 
-"Want something to go away? Just don't add it to args.output anymore."
+args.cvars
+ - Hash contains metadata pulled from the files under the ./metadata directory. To get the keys that are available type $args.cvars.keys in the Console.
+   - args.cvars["game_metadata.version"].value.to_s
+
+args.layout
+  - Layout provides apis for placing primitives on a virtual grid that's within the "safe area" accross all platforms. This virtual grid is useful for rendering static controls (buttons, menu items, configuration screens, etc).
+
+args.grid
+  - Provides information about the screen and game canvas.
   
-args.outputs.debug
-  # output debug stuff here, probably doesn't go to production release
+args.gtk
+  - core runtime class
+  - $gtk.function(...) or GTK.function(...)
+    - or, if in the main tick, args.gtk.function
+  - array (extensions)
+      - **each**
+      - map_2d
+  - macros
+    - attr = attr_accessor
+    - **attr_gtk** passing args for you
+  - contains a bunch of environment/utility functions, SDL stuff, etc.
+    - window related stuff
+    - mouse related stuff
+    - request_quit / quit_requested?
+    - platform?
+    - exec
+      - Given an OS dependent cli command represented as a string, this function executes the command and returns a string representing the results.
+        - **connect the shell to DR!!**
+    - system
+      - same as above, but put outputs to the console (returns nil)
+  - file i/o
+    - within the same directory as the the dragonruby binary
+  - network i/o
+    - start a http server..!
+  - dev support functions
+    - lots..!
+    - use these in the dev console
+    - reset
+    - slowmo!
+    - replay
+    - recording
+    - ..hopefully there's autocomplete..!
+    
   
-** some notes from the docs
+**** some notes from the docs
 
 If you want your game to run at full speed even when it's in the background, add the following line to mygame/metadata/cvars.txt:
 
 renderer.background_sleep=0
 
-** DR magicks
+**** DR magicks
 
 player[:x] = player[:x].add(dx).clamp(0)
   # "In DR specifically, Hashes have access semantics that look more like JavaScript objects: you can access (Symbol) keys either with square brackets or dot-notation. The rationale for this is that it makes the code change smaller when migrating from Hashes to Objects, with the bonus that dot-notation can actually be faster than the equivalent bracketed lookup." - pvande
@@ -243,7 +325,7 @@ entity = {
 }
   # can nest sprites/entities together
   
-** secrets that can't be found via lsp
+**** secrets that can't be found via lsp
 rand # global var?
 
 sprite = { path: :pixel }
@@ -254,10 +336,16 @@ sprite = { path: :pixel }
 
 1.to_radians/degrees
 
-** optimal ways
+**** optimal ways / troubleshoot performance
+
+see "troubleshoot performance" in the tutorial
+
+TODO: though shouldn't pre-optimize, def need to know some good habits
+
 # better to render via sprites instead of drawing api
 #   - solids, borders, lines are debug objects and not meant for production, as they are drawn one pixel at a time..! lines can be used, but a sprite is still much better
-** some more samples
+
+**** some more samples
 
 NOTE: the samples should be more than enough..!
 
@@ -271,7 +359,7 @@ https://github.com/kfischer-okarin/dragonruby-toolbox
 https://github.com/kfischer-okarin/dragon_skeleton
 https://github.com/kfischer-okarin/roguelike-base/
 
-** ecs
+**** ecs
 
 #+begin_src ruby
 
@@ -525,133 +613,22 @@ class ComponentDefinitions
     @definit
 #+end_src
 
-
-* amir's response about dynamic typing
-# The way DR mitigates the lack of a static typing "feedback" is:
-# hotloading with game state being retained
-# built-in HUD/Quake Console
-# args.outputs.watch https://docs.dragonruby.org/#/api/outputs?id=watch
-# game play recording and replay https://docs.dragonruby.org/#/api/runtime?id=start_recording YouTube demo.d
-
-# the (very real) benefits of dynamic typing:
-# you are never waiting to start working again
-# when in the prototyping phase, where you don't know what you're building yet, there's nothing asking you "but what are you building?!"
-# in the event of an exception, the game is paused giving you a chance to introspect your game state
-# extreme flexibilty, in a domain - game/artistic endeavors - where things simply don't fit into nice neat boxes
-# significantly less code is written to accomplish the same task, hands down ^_^
-* some design quotes from amir
-**"Start your game as simply as possible. One file, one method (tick).**
-
-**"A game is a body-of-state that goes through a pipeline of data transforms, and returns what should be rendered to the screen. Your single method will eventually become a collection of methods that are executed in order (it’s procedural in nature given that it’s a pipeline that transforms data/game state)."**
-
-wrt incremental evolution: **a system in it's simplest form is a function that acts on data. that's what I start with**
-
-**my "entity" is a hash. and my component is keys on that hash.**
-  - **start with this for entity architecture**
-
-**ecs in its simplest form is a function that operates on a hash with an assumed set of keys/properties**
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-* TODO merge from notes.md
-(the rest of this file)
 * deploy
 see docs
 itch
 mobile
   - only pro version
 
-* args
-args.outputs
-  - draw things, append arrays with << operator
-  
-args.inputs
-
-args.state
-args.state.player[x:]
-args.state.player.x
-  - a place you can hang your own data. It's an open data structure that allows you to define properties that are arbitrarily nested. You don't need to define any kind of class.
-  - it seems to be nested hashes
-  - dot notation has the benefit of being easy to refactor if player evolves into a class
-  - standard hash notation currently has the benefit of auto-complete working
-  
-args.geometry
-
-args.cvars
- - Hash contains metadata pulled from the files under the ./metadata directory. To get the keys that are available type $args.cvars.keys in the Console.
-   - args.cvars["game_metadata.version"].value.to_s
-
-args.layout
-  - Layout provides apis for placing primitives on a virtual grid that's within the "safe area" accross all platforms. This virtual grid is useful for rendering static controls (buttons, menu items, configuration screens, etc).
-
-args.grid
-  - Provides information about the screen and game canvas.
-  
-args.gtk
-  - core runtime class
-  - $gtk.function(...) or GTK.function(...)
-    - or, if in the main tick, args.gtk.function
-  - array (extensions)
-      - **each**
-      - map_2d
-  - macros
-    - attr = attr_accessor
-    - **attr_gtk** passing args for you
-  - contains a bunch of environment/utility functions, SDL stuff, etc.
-    - window related stuff
-    - mouse related stuff
-    - request_quit / quit_requested?
-    - platform?
-    - exec
-      - Given an OS dependent cli command represented as a string, this function executes the command and returns a string representing the results.
-        - **connect the shell to DR!!**
-    - system
-      - same as above, but put outputs to the console (returns nil)
-  - file i/o
-    - within the same directory as the the dragonruby binary
-  - network i/o
-    - start a http server..!
-  - dev support functions
-    - lots..!
-    - use these in the dev console
-    - reset
-    - slowmo!
-    - replay
-    - recording
-    - ..hopefully there's autocomplete..!
-    
-* troubleshoot performance
-TODO: though shouldn't pre-optimize, def need to know some good habits
-
-
-
-
-
-
 
 * getting started / tutorial
+
+my notes while going over the tutorial in the docs
+  - it's mostly copy-pasta from the single page docs, which just wasn't very organized..
+
 TODO: can extract the important bits out later, once i'm more comfy with the engine and language
-
-
-* hello world
-* game loop/stick runs 60 frames/second
-
-```ruby
-* in main.rb
+  - or maybe can keep as a refresher..
+  
+** in main.rb
 def tick args
   args.outputs.labels << [580, 400, 'Hello World!']
 end
@@ -668,9 +645,7 @@ The "<<" thing says "append this array onto the list of them at args.outputs.lab
 Once your tick function finishes, we look at all the arrays you made and figure out how to draw it. You don't need to know about graphics APIs. You're just setting up some arrays! DragonRuby clears out these arrays every frame, so you just need to add what you need _right now_ each time.
 
 
-
-
-* sprites
+** sprites
 Each 2D image in DragonRuby is called a "sprite," and to use them, you just make sure they exist in a reasonable file format (png, jpg, gif, bmp, etc) and specify them by filename. The first time you use one, DragonRuby will load it and keep it in video memory for fast access in the future. If you use a filename that doesn't exist, you get a fun checkerboard pattern!
 
 ```ruby
@@ -686,9 +661,7 @@ NOTE: when you save main.rb, DragonRuby will notice and reload your program.
 That .sprites line says "add a sprite to the list of sprites we're drawing, and draw it at position (576, 100) at a size of 128x101 pixels". You can find the image to draw at dragonruby.png.
 
 
-
-
-* coordinates
+** coordinates
 **(0, 0) is the bottom left corner of the screen, and positive numbers go up and to the right.** This is more "geometrically correct," even if it's not how you remember doing 2D graphics, but we chose this for a simpler reason: when you're making Super Mario Brothers and you want Mario to jump, you should be able to add to Mario's y position as he goes up and subtract as he falls. It makes things easier to understand.
   - yesssss!!! love this reasoning! design > formalisms
 
@@ -708,16 +681,14 @@ end
 In this case, the current rotation of our sprite, which is happily spinning at 60 frames per second. If you don't specify rotation (or alpha, or color modulation, or a source rectangle, etc), **DragonRuby picks a reasonable default,** and **the array is ordered by the most likely things you need to tell us:** position, size, name.
 
 
-
-* there is no delta time
+** there is no delta time
 One thing we decided to do in DragonRuby is not make you worry about delta time: **your function runs at 60 frames per second (about 16 milliseconds) and that's that.** Having to worry about framerate is something massive triple-AAA games do, but for fun little 2D games? You'd have to work really hard to not hit 60fps. All your drawing is happening on a GPU designed to run Fortnite quickly; it can definitely handle this.
 
 Since we didn't make you worry about delta time, you can just move the rotation by 1 every time and it works without you having to keep track of time and math. Want it to move faster? Subtract 2.
   - hmmmm, interesting choice..
 
 
-
-* handle user input
+** handle user input
 ```ruby
 def tick args
   args.state.rotation ||= 0

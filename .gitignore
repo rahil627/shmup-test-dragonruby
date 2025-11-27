@@ -1,3 +1,21 @@
+
+# from the docs
+dragonruby
+dragonruby.exe
+dragonruby-publish
+dragonruby-publish.exe
+dragonruby-bind
+dragonruby-bind.exe
+/tmp/
+/builds/
+/logs/
+/samples/
+/docs/
+/.dragonruby/
+
+# OLD
+# not sure where i got this from...
+
 *.gem
 *.rbc
 /.config

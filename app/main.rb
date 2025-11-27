@@ -2,8 +2,9 @@
 # date: Wed Nov 5 02:30:27 CST 2025
 # git: ecab86c436a1854ab3c424ee5d82fefdbbba103c
 
-require_relative "defaults"
+require_relative "common"
 require_relative "input"
+require_relative "sprites"
 
 
 def tick args
@@ -21,7 +22,6 @@ end
 class Game # TODO: how come i can't see Game in the dev console..??
   attr_gtk # included modules work fine too! :D
 
-  include Defaults # plural?
   include Common
   include Input
   include Sprites

@@ -47,9 +47,8 @@ module Common
 
 
   def default_init
-    $args.gtk.set_window_size(500, 500)
-    GTK.set_window_size(500, 500)
-    # TODO: not working..
+    GTK.set_window_size(640, 360)
+    #   - maybe just a chromeos/linux container problem..
   end
 
   

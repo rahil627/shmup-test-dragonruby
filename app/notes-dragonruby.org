@@ -257,6 +257,20 @@ sprite = { path: :pixel }
 ** optimal ways
 # better to render via sprites instead of drawing api
 #   - solids, borders, lines are debug objects and not meant for production, as they are drawn one pixel at a time..! lines can be used, but a sprite is still much better
+** some more samples
+
+NOTE: the samples should be more than enough..!
+
+from discord:
+...
+
+amir's gist:
+https://gist.github.com/amirrajan
+
+https://github.com/kfischer-okarin/dragonruby-toolbox
+https://github.com/kfischer-okarin/dragon_skeleton
+https://github.com/kfischer-okarin/roguelike-base/
+
 
 * amir's response about dynamic typing
 # The way DR mitigates the lack of a static typing "feedback" is:

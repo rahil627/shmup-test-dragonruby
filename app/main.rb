@@ -142,7 +142,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
     #    - add new laser
 
     # TODO:
-    # check_laser_collisions args
+    # check_laser_collisions
     #   - do after reflect and add_players_shots, 'cause they add new lasers
   end
 
@@ -175,7 +175,6 @@ class Game # TODO: how come i can't see Game in the dev console..??
 
 
   def add_players_shots
-    # p = args.state.player
     args.state.players.each do |p|
 
       p[:cooldown] -= 1
@@ -187,6 +186,8 @@ class Game # TODO: how come i can't see Game in the dev console..??
       return if dx == 0 and dy == 0 # if no input, return early
 
       # add a new bullet to the list of player bullets
+      # NOTE: at the moment, i don't track this: all lasers hurt every player
+      
       w = p.w
       h = p.h
 

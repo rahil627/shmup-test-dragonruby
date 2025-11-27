@@ -228,7 +228,6 @@ class Game # TODO: how come i can't see Game in the dev console..??
 
       # when laser.head hits a wall, reflect
       if off_screen_or_on_the_edge? l.head
-        l.trash ||= true
         
         # add a reflecting laser
         

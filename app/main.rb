@@ -7,6 +7,13 @@ require_relative "input"
 require_relative "sprites"
 
 
+# TODO:
+# $game ||= Game.new # auto-init deprecated, check ruby's safe operator
+def boot args
+  # args.state = {} # disables auto-init of nil
+end
+
+
 def tick args
   # args.gtk.suppress_mailbox = false # for communication to ide
   #  - TODO: ERROR: probably just some old info ai found..

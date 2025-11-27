@@ -27,7 +27,7 @@ end
 
 
 class Game # TODO: how come i can't see Game in the dev console..??
-  attr_gtk # included modules work fine too! :D
+  attr_gtk # NOTE: included modules work fine too! :D
 
   include Common
   include Input
@@ -137,13 +137,13 @@ class Game # TODO: how come i can't see Game in the dev console..??
     add_players_shots
 
     move_lasers
-    #   - extend
-    #   - reflect
-    #     - add new laser
+    #  - extend
+    #  - reflect
+    #    - add new laser
 
     # TODO:
     # check_laser_collisions args
-    #   - do after reflect and shoot_players, 'cause they add new lasers
+    #   - do after reflect and add_players_shots, 'cause they add new lasers
   end
 
 

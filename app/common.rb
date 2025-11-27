@@ -35,12 +35,9 @@ module Common
   
 
   ### module Defaults
-  
   # common sane defaults for my personal games
   # just 'default_init args' on init and 'default_tick args' on tick and you're good!
 
-  # TODO: is the attr_gtk macro only at class level? not module level?
-  
   def default_pre_init
     
   end

@@ -168,7 +168,7 @@ Restart Emacs for the changes to take effect. Now, when editing DragonRuby files
 *** ctags
 ctags for emacs (etags) and vim are included
 
-NOTE: ALL of the completions are jumbled up.. :/. there is no object/module hierarchy to organize completions
+NOTE: *though much simpler and less resource-intensive than a lsp, ALL of the completions are jumbled up.. :/. there is no object/module hierarchy to organize completions*
   - everything is under GTK, or the module or class name (Sprite, Rect, etc.)
     - i mean, that's what the tags tables file shows.. if i'm reading it correctly..
   - shit, maybe a static lang is better..
@@ -191,15 +191,34 @@ etags $(find . -name \*.[ch]) --declarations
 
 *** lsp
 
-install the solargraph gem
+install ruby
+  - see [ruby#install]
+    
+#+begin_src sh
+gem install solargraph
+gem install yard
+#+end_src
+
 get the dr yard docs repo
+  - https://github.com/owenbutler/dragonruby-yard-doc
+    - check the readme, in case anything changed
+
+add the following to solargraph.yml:
+#+begin_src yaml
+include:
+- "mygame/app/*.rb"
+- "../dragonruby-yard-doc/*.rb"
+#+end_src
+
+  
 in mygame folder, run `solargraph config`
 set up the relative directory to the yard docs repo and app folder
 
 i recall it at least categorizing completions, with the current class's methods on top, then super/inherited objects below
 
-but now, with the prism parser, surely there's a better one..??
-
+TODO: but now, with the prism parser, surely there's a better one..??
+  - https://github.com/rajnaveen344/ruby-fast-lsp
+    - could try it out..
 
 #+begin_src ruby
 $args. # NOT args.

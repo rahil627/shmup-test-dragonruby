@@ -269,11 +269,11 @@ class Game # TODO: how come i can't see Game in the dev console..??
     end
   end
 
-  def off_screen_or_on_the_edge_top_bottom? e
+  def off_screen_or_on_the_edge_top_bottom? e # inline
     e.y <= 0 - e.h || e.y >= 720 + e.h
   end
 
-  def off_screen_or_on_the_edge_left_right? e
+  def off_screen_or_on_the_edge_left_right? e # inline
     e.x <= 0 - e.w || e.x >= 1280 + e.w
   end
 

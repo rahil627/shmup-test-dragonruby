@@ -123,6 +123,11 @@ class Game # TODO: how come i can't see Game in the dev console..??
     state.players.reject!(&:trash)
 
     state.lasers.reject!(&:trash) # TODO: learn &:key
+    # INCOMPLETE: trash the associated laser segments too
+    # WAIT: until i setup ruby.. no clue how reject works.. maybe it returns the things it rejects..
+    #   - check the rejected laser's parent_id
+    #   - if 0, get sprite.id
+    #   - trash all that share that parent_id
   end
 
 
@@ -213,7 +218,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
 
       x = p.x + w/2 * dx
       y = p.y + h/2 * dy
-      add_laser ({x: x, y: y, dx: dx, dy: dy})
+      state.lasers << (make_laser_segment ({x: x, y: y, dx: dx, dy: dy, parent_id: 0}))
       
       # vs seperate sprite
       # state.laser_heads << { x: x, y: y, w: 5, h: 5, path: 'sprites/circle/green.png', angle: vector_to_angle(dx, dy) }
@@ -222,12 +227,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
     end
   end
 
-
-  def add_laser a
-    # NOTE: also called during reflect
-    state.lasers << (make_laser a)
-  end
-
+  
   def move_lasers
     state.lasers.each do |l|
 
@@ -263,7 +263,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
           l.dy *= -1
         end
         
-        add_laser ({x: l.head.x, y: l.head.y, dx: l.dx, dy: l.dy})
+        state.lasers << (make_laser_segment ({x: l.head.x, y: l.head.y, dx: l.dx, dy: l.dy, parent_id: l.id }))
       end
 
     end

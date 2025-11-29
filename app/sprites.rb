@@ -44,7 +44,7 @@ module Sprites # or entities?
   end
 
 
-  def make_laser a # hash with x, y, dx, dy
+  def make_laser_segment a # hash with x, y, dx, dy, parent_id
     # returns entity hash
     w = state.c.laser_width ||= 20
     
@@ -77,6 +77,7 @@ module Sprites # or entities?
       # vy: 10 * dy + state.player[:vy] / 7.5, # Factor in a bit of the player's velocity
 
       # extra fields
+      parent_id: a.parent_id, # 0 for first laser segment, then the first laser segments's sprite id (internal) for the rest of the segments
       # player: player_id
       trash: false, # not necessary, as ||= and {}.reject! will work without it
       dx: a.dx, # more convenient than angle..

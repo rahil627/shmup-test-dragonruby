@@ -23,12 +23,20 @@ end
 
 # create a laser collection
 #  - includes laser + reflections
+#  - DECIDE: single array of hashes, then iterate all to delete the segments
+#    or: array of arrays of hashes
+#      - new array (vector?) for every laser, and add segments to that, and just delete that when needed
+#        - would still have to interate array of arrays when outputting..
+#  - CONCLUSION: iterate on delete, as it shouldn't run every frame
+#    - NOTE: this is interesting.. as in object-oriented paradigm, i'd have an object composing another object, but here, it's more like a database, where there's a single layer / no hierachy..
+#  - TEST: try deleting a whole segment after some time..
 
 # BUG: second player stopped shooting after the first shot ;(
 
 #  - DESIGN: how to determine the length / when it should stop?
 #    - just try playing with various lengths..
-#    - first try with just one laser, and both players must survive/run
+#    - or something should stop it..
+#    - TEST: first try with just one laser, and both players must survive/run
 
 # DESIGN: maybe can have abilities:
 #  1. portal

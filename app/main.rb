@@ -6,6 +6,8 @@ require_relative "common"
 require_relative "input"
 require_relative "sprites"
 
+# GOALS:
+# try to write most of program in two files: main and common
 
 # TODO: main todo list
 # $game ||= Game.new # auto-init deprecated, check ruby's safe operator

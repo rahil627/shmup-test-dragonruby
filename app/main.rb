@@ -133,7 +133,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
     # output at the end
     outputs.background_color = [128, 0, 128]
 
-    args.outputs.sprites << [args.state.players, args.state.lasers]
+    outputs.sprites << [state.players, state.lasers]
     
     state.lasers.each do |l|
       outputs.sprites << l.head
@@ -225,7 +225,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
 
   def add_laser a
     # NOTE: also called during reflect
-    args.state.lasers << (make_laser a)
+    state.lasers << (make_laser a)
   end
 
   def move_lasers

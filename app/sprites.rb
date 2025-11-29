@@ -46,7 +46,7 @@ module Sprites # or entities?
 
   def make_laser a # hash with x, y, dx, dy
     # returns entity hash
-    w = args.state.c.laser_width ||= 20
+    w = state.c.laser_width ||= 20
     
     # TODO: can provide angle or vector or both?
     # angle = 0
@@ -73,8 +73,8 @@ module Sprites # or entities?
       # angle_anchor_x: 0.5,
       angle_anchor_y: 0, # don't quite remember.. bottom of length of laser?
       r:     255 * rand, g: 255 * rand, b: 255 * rand, # white by default
-      # vx:    10 * dx + args.state.player[:vx] / 7.5,
-      # vy: 10 * dy + args.state.player[:vy] / 7.5, # Factor in a bit of the player's velocity
+      # vx:    10 * dx + state.player[:vx] / 7.5,
+      # vy: 10 * dy + state.player[:vy] / 7.5, # Factor in a bit of the player's velocity
 
       # extra fields
       # player: player_id

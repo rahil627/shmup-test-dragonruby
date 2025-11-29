@@ -62,7 +62,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
   # TODO: should just set up code folding for now..
   
   # main game loop
-  # @param args [GTK::Args] # TODO: rename args to a (though can be difficult to search for "a.")
+  # @param args [GTK::Args]
   def tick
     init if Kernel.tick_count.zero? # thanks to pvande # TODO: test return after this?
     return if pause_because_unfocused? # from defaults module
@@ -91,25 +91,25 @@ class Game # TODO: how come i can't see Game in the dev console..??
     puts "init"
     
     # just note some state data here
-    # args.state.c = constants
+    # state.c = constants
 
     # TODO: surely somewhere..
     # just kept using hard-coded ints for now..
-    # args.state.screen = {x: 0, y: 0, h: 720, w: 1280}
-    args.state.screen = {x: 0, y: 0, h: 720/2, w: 1280/2}
+    # state.screen = {x: 0, y: 0, h: 720, w: 1280}
+    state.screen = {x: 0, y: 0, h: 720/2, w: 1280/2}
     # NOTE: Also: your game screen is _always_ 1280x720 pixels. If you resize the window, we will scale and letterbox everything appropriately, so you never have to worry about different resolutions.
     
-    args.state.players = []
-    args.state.lasers = []
+    state.players = []
+    state.lasers = []
     # arrays of hashes
     #   - much simpler than an entity-component-system! :)
 
     # NOTE: move this to update player
-    # p = args.state.player # must do after lazy init
+    # p = state.player # must do after lazy init
     # p[:r] = p[:g] = p[:b] = (p[:health] * 25.5).clamp(0, 255)
     
-    args.state.players << make_player1
-    args.state.players << make_player2
+    state.players << make_player1
+    state.players << make_player2
 
   end
 
@@ -120,8 +120,9 @@ class Game # TODO: how come i can't see Game in the dev console..??
   def take_out_the_trash
   # remove arrays 'n hashes all at once
     # "For what it’s worth, you could implement this behavior yourself — instead of calling “delete”, you could set obj.garbage = true. After your iteration, then you only need array.reject!(&:garbage) to clean up." - pvande
-    args.state.lasers.reject!(&:trash) # TODO: learn &:key
-    args.state.players.reject!(&:trash)
+    state.players.reject!(&:trash)
+
+    state.lasers.reject!(&:trash) # TODO: learn &:key
   end
 
 
@@ -130,17 +131,17 @@ class Game # TODO: how come i can't see Game in the dev console..??
   
   def handle_output
     # output at the end
-    args.outputs.background_color = [128, 0, 128]
+    outputs.background_color = [128, 0, 128]
 
     args.outputs.sprites << [args.state.players, args.state.lasers]
     
-    args.state.lasers.each do |l|
-      args.outputs.sprites << l.head
+    state.lasers.each do |l|
+      outputs.sprites << l.head
     end
 
     
     # from sample
-    # args.state.clear! if args.state.player[:health] < 0 # Reset the game if the player's health drops below zero
+    # state.clear! if state.player[:health] < 0 # Reset the game if the player's health drops below zero
   end
 
 
@@ -167,11 +168,11 @@ class Game # TODO: how come i can't see Game in the dev console..??
 
 
   def move_players
-    # p = args.state.player
-    args.state.players.each do |p|
+    # p = state.player
+    state.players.each do |p|
 
       s = p[:s] ||= 0.75 # speed
-      dx, dy = args.state.in.move_vector
+      dx, dy = state.in.move_vector
 
       # TODO: use anchor_x/y and angle_anchor_x to turn sprite
       p[:angle] = vector_to_angle(dx, dy)
@@ -194,14 +195,14 @@ class Game # TODO: how come i can't see Game in the dev console..??
 
 
   def add_players_shots
-    args.state.players.each do |p|
+    state.players.each do |p|
 
       p[:cooldown] -= 1
       return if p[:cooldown] > 0
       
       cooldown_length = p[:cooldown_length] ||= 60 # 1/second
       
-      dx, dy = args.state.in.shoot_vector
+      dx, dy = state.in.shoot_vector
       return if dx == 0 and dy == 0 # if no input, return early
 
       # add a new bullet to the list of player bullets
@@ -215,7 +216,7 @@ class Game # TODO: how come i can't see Game in the dev console..??
       add_laser ({x: x, y: y, dx: dx, dy: dy})
       
       # vs seperate sprite
-      # args.state.laser_heads << { x: x, y: y, w: 5, h: 5, path: 'sprites/circle/green.png', angle: vector_to_angle(dx, dy) }
+      # state.laser_heads << { x: x, y: y, w: 5, h: 5, path: 'sprites/circle/green.png', angle: vector_to_angle(dx, dy) }
 
       p[:cooldown] = cooldown_length # reset the cooldown
     end
@@ -228,9 +229,9 @@ class Game # TODO: how come i can't see Game in the dev console..??
   end
 
   def move_lasers
-    args.state.lasers.each do |l|
+    state.lasers.each do |l|
 
-      s = args.state.c.laser_speed ||= 1 # speed, 1/720 per tick..?
+      s = state.c.laser_speed ||= 1 # speed, 1/720 per tick..?
 
       # extend
       l.h += s
@@ -279,12 +280,12 @@ class Game # TODO: how come i can't see Game in the dev console..??
   
   def check_laser_collisions
     # TODO: incomplete
-    args.state.lasers.each do |l| # loop players or lasers? no player port frame advantage!
-      args.state.players.each do |p|
+    state.lasers.each do |l| # loop players or lasers? no player port frame advantage!
+      state.players.each do |p|
 
         # TODO: dunno about any of this, it's from the sample
-        # args.state.enemies.reject! do |enemy| # TODO: reject, but no conditional..?
-        # args.state.player_bullets.any? do |bullet| # TODO: LEARN: any, no conditional
+        # state.enemies.reject! do |enemy| # TODO: reject, but no conditional..?
+        # state.player_bullets.any? do |bullet| # TODO: LEARN: any, no conditional
         # TODO: should center sprite anchors, especially player
         #   - Check if enemy and player are within 20 pixels of each other (i.e. overlapping)
         if 1000 > (l.x - p.x ** 2 + (l.y - p.y) ** 2)

@@ -13,6 +13,14 @@ def boot args
   # args.state = {} # disables auto-init of nil
 end
 
+# setup ide
+# check if company-dragonruby / emacs completion still works
+#   - mailbox deprecated.. :/
+#   - check discord
+# install ruby, lsp (solargraph), yard, download yard docs repo
+#   - might actually be better to just put the whole folder into source control after all..
+# try the newer rust lsp impl
+
 # create a laser collection
 #  - includes laser + reflections
 
@@ -35,7 +43,7 @@ end
 
 def tick args
   # args.gtk.suppress_mailbox = false # for communication to ide
-  #  - TODO: ERROR: probably just some old info ai found..
+  #  - ERROR: doesn't exist anymore.. :/
   $game = Game.new if Kernel.tick_count.zero?
   $game.args = args # for attr_gtk macro
   $game.tick

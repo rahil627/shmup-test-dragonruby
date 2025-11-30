@@ -2,25 +2,36 @@
 TODO: make a private git repo, and put the binary in it
   - this way i don't ever have to bother with set-up (or versions)!
   - only need one version.. so i don't need to login to itch.io again to download it..
+    
+  - set-up as git module to the game repo
 
-TODO: setup company-dragonruby for emacs
+NVM: setup company-dragonruby for emacs
+  - *was just a prototype.. :/*
   - copy configs
     - TODO: create a function for this
-  - doom sync
-  - test it out!
   - is it ordered?
     - (corfu +orderless +company) ; try removing +orderless in init?
     - corfu-sort-function?
 
+TODO: set-up 
+  
 https://discord.dragonruby.org
   - GO TO DISCORD
+
+* TODO read the code
+
+*it might just be easier to read the framework/run-time..*
+  - *at the minimum, it's very helpful..*
+  - "the up to date contrib repo contents are actually in docs/oss"
+  - the old(?) repo
+    - https://github.com/DragonRuby/dragonruby-game-toolkit-contrib
 
 * docs
 single file static local docs
   - [[file:~/my-stuff/repos/dragonruby/dragonruby-linux-amd64/docs/static/docs.html]]
   - [[file:~/my-stuff/repos/dragonruby/dragonruby-linux-amd64/docs/static/docs.txt]]
     - *actually a .org file!!*
-
+    
 * philosophy
 
 TODO: read
@@ -99,7 +110,6 @@ if linux, can add to path in .bashrc, to make it easier to run
     export PATH="~/my-stuff/repos/dragonruby/dragonruby-linux-amd64/dragonruby:$PATH"
 #+end_src
 
-  
 ** dev console
 
 ` or ~
@@ -139,9 +149,6 @@ DragonRuby also ships with a unit testing facility. You can invoke the following
 Debugging something that runs at 60fps is (imo) not that helpful. The exception you are seeing could have been because of a change that occurred many frames ago."
 
 ** text editor setup
-
-NOTE: i temporarily turned off ruby entirely in the .bashrc file using mise..
-
 *** emacs company-mode
 
 from ai:
@@ -197,6 +204,8 @@ etags $(find . -name \*.[ch]) --declarations
 
 *** lsp
 
+TODO: merge with ruby.org lsp notes
+
 install ruby
   - see [ruby#install]
     
@@ -208,7 +217,9 @@ gem install solargraph
 get the dr yard docs repo
   - https://github.com/owenbutler/dragonruby-yard-doc
     - check the readme, in case anything changed
-
+  - NOTE: i added this as a sub-module to the dragonruby repo
+  - TODO: can you just use docs/oss instead?
+    
 add the following to solargraph.yml:
 #+begin_src yaml
 include:
@@ -218,7 +229,12 @@ include:
 
   
 in mygame folder, run `solargraph config`
+  - generates solargaph.yml
 set up the relative directory to the yard docs repo and app folder
+
+NOTE: i don't think you need to actually generate docs (via 'yard doc .' / 'yardoc'). it reads the files directly, generating it's own stuff / caching data to a share location ('~/.cache/solargraph'). "It generates this information automatically at runtime".
+
+NOTE: if emacs, the lsp(-mode) may ask within a pop-up for the root of the project (in case you open a buffer that isn't part of the project's root). You must set that in order to auto-start the lsp.
 
 i recall it at least categorizing completions, with the current class's methods on top, then super/inherited objects below
 
@@ -226,6 +242,7 @@ TODO: but now, with the prism parser, surely there's a better one..??
   - https://github.com/rajnaveen344/ruby-fast-lsp
     - could try it out..
 
+  
 #+begin_src ruby
 $args. # NOT args.
   # triggers auto-complete
@@ -244,7 +261,18 @@ def tick args
   args.
     # triggers auto-complete
     # but at the moment, it only works within the function, and doesn't propogate the call stack
+    # i think it just doesn't work with the attr_gtk module/macro thing..
+    # or maybe it was the type hint that made it work..?
 end
+
+$game.
+  # shows everything in the Game class, which should be everything i write..
+
+han
+  # typing 3 characters triggers the lsp
+  # i think the minimum is one character..
+  #  - TODO: could try this out..
+  
 #+end_src
 
 * code

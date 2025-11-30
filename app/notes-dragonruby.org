@@ -94,6 +94,12 @@ leave the game open as you are coding!
   - it will auto-pause/suspend
   - save the main.rb file to reload the updated game
 
+if linux, can add to path in .bashrc, to make it easier to run
+#+begin_src sh
+    export PATH="~/my-stuff/repos/dragonruby/dragonruby-linux-amd64/dragonruby:$PATH"
+#+end_src
+
+  
 ** dev console
 
 ` or ~
@@ -196,7 +202,7 @@ install ruby
     
 #+begin_src sh
 gem install solargraph
-gem install yard
+# gem install yard # solargraph includes this
 #+end_src
 
 get the dr yard docs repo

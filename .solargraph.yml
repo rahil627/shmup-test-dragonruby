@@ -4,9 +4,11 @@ include:
   # if pwd = dragonruby-windows-amd64/mygame
   - "app/*.rb"
   - "../../dragonruby-yard-doc/*.rb"
-# if pwd = dragonruby-windows-amd64/
-# - "mygame/app/*.rb"
-# - "../dragonruby-yard-doc/*.rb"
+  - "../../../dragonruby-yard-doc/*.rb"
+  - "../../../dragonruby/dragonruby-yard-doc/*.rb" # FIXME: still not working.. hmmm
+  # if pwd = dragonruby-windows-amd64/
+  # - "mygame/app/*.rb"
+  # - "../dragonruby-yard-doc/*.rb"
 exclude:
   - spec/**/*
   - test/**/*

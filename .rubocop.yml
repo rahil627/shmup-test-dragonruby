@@ -1,0 +1,46 @@
+
+
+# inherit_from: .rubocop_todo.yml
+#   - generated from `rubocop --auto-gen-config`
+
+
+# turn off all formatting related cops
+Style:
+  Enabled: false
+
+Layout:
+  Enabled: false
+  
+Metrics:
+  # "I’m still on the run from the rubocops for committing cyclomatic complexity" - akzidenz
+  Enabled: false
+  
+# Naming:
+#   Enabled: false
+
+
+
+
+# at first i tried turning off specific cops..
+#   - yeah.. it didn't last long..
+#   - there was one that suggested i use next/break instead of return, which was quite nice.. so there may be useful stuff in there..
+# Style/EmptyLinesAroundBody:
+#   Enabled: false
+
+# Style/MethodDefParentheses:
+#   Enabled: false
+
+# Metrics/ClassLength:
+#   Enabled: false
+
+# Layout/TrailingWhitespace:
+#   Enabled: false
+
+# Style/AndOr: # wtf is wrong with and/or over &&/| ?
+#   Enabled: false
+
+# Style/CommentedKeyword:
+#   Enabled: false
+
+# Layout/EmptyLines:
+#   Enabled: false

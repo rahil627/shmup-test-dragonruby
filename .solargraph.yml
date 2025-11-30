@@ -15,14 +15,18 @@ exclude:
 require: []
 domains: []
 reporters:
-  - rubocop # TODO: annoying in sublime text with default rubocop settings, but seems fine in zed..??
+  # - rubocop # don't care until the program is massive, and i get in da flow!
+  # NOTE: even with this off, emacs seems to run rubocop via flycheck..
+  #   - can disable by adding this to config.el
+  #   - (remove-hook 'ruby-mode-hook #'rubocop-mode)
+  # zed seemed to have better defaults.. or maybe it was just off?.. lol
   - require_not_found
-formatter:
-  rubocop:
-    cops: safe
-    except: []
-    only: []
-    extra_args: []
+# formatter:
+#   rubocop:
+#     cops: safe
+#     except: []
+#     only: []
+#     extra_args: []
 require_paths: []
 plugins: []
 max_files: 5000

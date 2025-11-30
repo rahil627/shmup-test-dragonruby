@@ -149,7 +149,10 @@ DragonRuby also ships with a unit testing facility. You can invoke the following
 Debugging something that runs at 60fps is (imo) not that helpful. The exception you are seeing could have been because of a change that occurred many frames ago."
 
 ** text editor setup
-*** emacs company-mode
+*** NO emacs company-mode
+
+WARNING: old prototype / not "production-ready"
+
 
 from ai:
 Installing company-dragonruby in Doom Emacs and integrating it with corfu and cape involves several steps.
@@ -166,7 +169,7 @@ Install company-dragonruby.
 Add company-dragonruby to your ~/.doom.d/packages.el file.
 Code
 
-    (package! company-dragonruby)
+(package! company-dragonruby :recipe (:host github :repo "DragonRuby/company-dragonruby"))
 Then, run doom sync in your terminal to install the package.
 Configure corfu and cape to use company-dragonruby:
 In your ~/.doom.d/config.el file, you need to configure cape to bridge company-dragonruby to completion-at-point-functions (CAPF), which corfu uses.
@@ -175,6 +178,7 @@ Code
     (after! company-dragonruby
       (add-to-list 'completion-at-point-functions
                    (cape-company-to-capf #'company-dragonruby)))
+    ;; NOTE: cape-company-to-capf in cape.el converts company stuff to emacs native capf (completion-at-point-functions)
 This code snippet ensures that after company-dragonruby is loaded, its completion capabilities are exposed to corfu via cape-company-to-capf. Reload Doom Emacs.
 Restart Emacs for the changes to take effect. Now, when editing DragonRuby files, corfu should provide completions using company-dragonruby.
 
